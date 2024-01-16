@@ -1,5 +1,4 @@
-import logo from './logo.svg';
-import cabin from './cabin_myst.jpg'
+
 import './App.css';
 
 import { Link } from "react-router-dom";

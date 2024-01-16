@@ -16,12 +16,12 @@ import { updateUserName, updateUserCredits, updateUserExperience, updateUserItem
 import './App.css';
 
 const objectsPath = [
-  {id:0, type: 99, name:"forest", description: "in an abandoned forest, here you are, alone, trying to find an escape after being chased by monsters. Your only option, keep moving forward", options:[{info:'continue', nextId:1}] },
-  {id:1, type: 1, name:"forest", description: "there is a road, no turning point, only option is to go straigth.", options:[{info:'follow the path', nextId:101}] },
-  {id:10, type: 1, name:"forest", description: "there is a road, no turning point, only option is to go straigth.", options:[{info:'follow the path'}] },
-  {id:101, type: 1, name:"forest", description: "there is a bag on the floor", options:[{info:'take it', nextId:102}] },
-  {id:102, type: 1, name:"forest", description: "You look at the bag, big enough to be an inventory, and find a corn!", options:[{info:'blow in it', nextId:103, inventory:50}] },
-  {id:103, type: 2, name:"forest", description: "ah, it seems it calls a lutin! He greats you and asks for your name", options:[{info:'continue', placeholder:'enter my name', input:true, nameInput:"name",nextId:104}] },
+  {id:0, type: 99, name:"forest", description: "in an abandoned forest, here you are, alone, trying to find an escape after being chased by monsters. Your only option, keep moving forward", options:[{info:'continue', nextId:1, image:"user"}] },
+  {id:1, type: 1, name:"forest", description: "there is a road, no turning point, only option is to go straigth.", options:[{info:'follow the path', nextId:101, image:"path_forest"}] },
+  {id:10, type: 1, name:"forest", description: "there is a road, no turning point, only option is to go straigth.", options:[{info:'follow the path', image:"path_forest"}] },
+  {id:101, type: 1, name:"forest", description: "there is a bag on the floor", options:[{info:'take it', nextId:102, image:"bag_floor"}] },
+  {id:102, type: 1, name:"forest", description: "You look at the bag, big enough to be an inventory, and find a horn!", options:[{info:'blow in it', nextId:103, inventory:50, image:"horn_bag"}] },
+  {id:103, type: 2, name:"forest", description: "ah, it seems it calls a goblin! He greats you and asks for your name", options:[{info:'continue', placeholder:'enter my name', input:true, nameInput:"name",nextId:104, image:"goblin"}] },
   {id:104, type: 1, name:"forest", description: "He explains to you that in possession of the corn, when you blow in it, it calls him and allow you to trade with him", options:[{info:'ah cool!', nextId:105}] },
   {id:105, type: 1, name:"forest", description: "He explains you that each time you make an action, you gain some experience!", options:[{info:'noted!', nextId:106}] },
   {id:106, type: 1, name:"forest", description: "but that weird creatures are roaming in the forest...!", options:[{info:'ah...', nextId:107}] },
@@ -52,8 +52,9 @@ const itemsList = [
 const monsters = [
   {id:1, name:"Lutin", attack:0, credits:0, experience:10},
   {id:2, name:"Thief", attack:0, credits:-20, experience:10},
-  {id:3, name:"Thief", attack:-50, credits:0, experience:20}
+  {id:3, name:"Monster", attack:-50, credits:0, experience:20}
 ]
+
 
 function generateRandom () {
   const objectsPathOnlyMain = objectsPath.filter(i => i.type === 0)
@@ -122,10 +123,21 @@ function checkIfInput(item, setInputNeded) {
   }
 }
 
-function checkIfSpecificEvent(event, pathLeg, setInputNeded) {
+function checkIfImages(setImageToShow, newItem) {
+  const imagesItem = []
+  newItem.options.forEach(itemOption => {
+    if (itemOption.hasOwnProperty("image")) {
+      imagesItem.push(itemOption.image)
+    }
+  });
+  setImageToShow(imagesItem)
+}
+
+function checkIfSpecificEvent(event, pathLeg, setInputNeded, setImageToShow) {
   if (pathLeg.hasOwnProperty("nextId")) {
     const itemToReceive = objectsPath.filter(i => i.id === pathLeg.nextId)
     checkIfInput(itemToReceive[0],setInputNeded)
+    checkIfImages(setImageToShow, itemToReceive[0])
     return itemToReceive[0]
   } else {
     let item = generateRandom()
@@ -133,6 +145,7 @@ function checkIfSpecificEvent(event, pathLeg, setInputNeded) {
       item = generateRandom()
     }
     checkIfInput(item, setInputNeded)
+    checkIfImages(setImageToShow, item)
     return item
   }
 }
@@ -152,6 +165,7 @@ function GameEvents({user}) {
 
   const [ event, setEvent ] = useState(objectsPath.filter(i => i.type === 99)[0])
   const [ inputNeded, setInputNeded ] = useState(false)
+  const [ imageToShow, setImageToShow ] = useState([objectsPath.filter(i => i.type === 99)[0].options[0].image])
 
 
   const handleClick = (pathLeg,e) => {
@@ -165,25 +179,30 @@ function GameEvents({user}) {
     checkIfExperience(user.experience, pathLeg, dispatch)
     checkIfMonster(user, pathLeg, dispatch)
 
-    const newItem = checkIfSpecificEvent(event, pathLeg, setInputNeded)
+    const newItem = checkIfSpecificEvent(event, pathLeg, setInputNeded, setImageToShow)
     setEvent(newItem)
   }
 
- 
+
   return (
     <div className="App">
       <header className="App-header">
         <p className="" >{event.description}</p>
         <div className="Buttons-game" >
           {event.options.map((i, index) =>
-          <div key={i.info} className="Buttons-individual-game">
-            {inputNeded ?
-            <form onSubmit={(e) => handleClick(i,e)}>
-              <input type="text" id={i.nameInput}  name={i.nameInput} placeholder={i.placeholder} required />
-              <button className="Button-game" >{i.info}</button>
-            </form > :
-            <button className="Button-game" onClick={(e) => handleClick(i,e)}>{i.info}</button> }
-            </div> ) }
+          <div key={i.info}>
+            {imageToShow.length > 0 && <img src={require(`./images/${imageToShow[index]}.jpg`)} alt={imageToShow[index]} className="Image-options" />} 
+            <div className="Buttons-individual-game">
+              {inputNeded ?
+              <form onSubmit={(e) => handleClick(i,e)}>
+                <input type="text" id={i.nameInput}  name={i.nameInput} placeholder={i.placeholder} required />
+                <button className="Button-game" >{i.info}</button>
+              </form > :
+              <button className="Button-game" onClick={(e) => handleClick(i,e)}>{i.info}</button> }
+              </div> 
+            </div>
+            )}
+            
         </div>
       </header>
     </div>
