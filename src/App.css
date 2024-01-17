@@ -123,8 +123,8 @@ color: white;
 	        animation-iteration-count: 1;
 	-webkit-animation-timing-function: ease-in;
 	        animation-timing-function: ease-in;
-	-webkit-animation-duration: 1.5s;
-	        animation-duration: 1.5s;
+	-webkit-animation-duration: 1s;
+	        animation-duration: 1s;
 }
 
 @-webkit-keyframes fadeInOpacity {
@@ -152,8 +152,8 @@ color: white;
 	        animation-iteration-count: 1;
 	-webkit-animation-timing-function: ease-in;
 	        animation-timing-function: ease-in;
-	-webkit-animation-duration: 2.5s;
-	        animation-duration: 2.5s;
+	-webkit-animation-duration: 1.5s;
+	        animation-duration: 1.5s;
 }
 
 @-webkit-keyframes fadeInOpacity {
@@ -182,8 +182,8 @@ color: white;
 	        animation-iteration-count: 1;
 	-webkit-animation-timing-function: ease-in;
 	        animation-timing-function: ease-in;
-	-webkit-animation-duration: 3s;
-	        animation-duration: 3s;
+	-webkit-animation-duration: 2s;
+	        animation-duration: 2s;
 }
 
 @-webkit-keyframes fadeInOpacity {

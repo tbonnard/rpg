@@ -11,6 +11,8 @@ import { updateUserName, updateUserCredits, updateUserExperience, updateUserItem
 // TODO: life = 0 --> start again menu
 // TODO: item in store to buy: respanwer / teleport to a position - refer to map
 // TODO: map
+// TODO: message based on what happened, if won or lose points for instance
+// TODO: xp + level
 
 // FYI:type 0 =  start of the game -- type 1 = regular, nothing spe ---  type 2 = start of an event --- type 3 = inside an event
 
@@ -21,17 +23,17 @@ const objectsPath = [
   {id:1, type: 3, name:"forest", description: "there is a road, no turning point, only option is to go straigth.", options:[{info:'follow the path', nextId:3, image:"path_forest"}] },
   {id:2, type: 1, name:"forest", description: "You're back on the road, no turning point, only option is to go straigth.", options:[{info:'follow the path', image:"path_forest"}] },
   {id:25, type: 1, name:"forest", description: "Still that road...", options:[{info:'follow the path', image:"path_forest"}] },
-  {id:26, type: 1, name:"forest", description: "Endlessness", options:[{info:'follow the path', image:"path_forest"}] },
+  {id:26, type: 1, name:"forest", description: "Endlessness path", options:[{info:'follow the path', image:"path_forest"}] },
   {id:3, type: 3, name:"forest", description: "there is a bag on the floor", options:[{info:'take it', nextId:4, image:"bag_floor"}] },
   {id:4, type: 3, name:"forest", description: "You look at the bag, big enough to be an inventory, and find a horn!", options:[{info:'blow in it', nextId:5, inventory:50, item:0, image:"horn_bag"}] },
-  {id:5, type: 3, name:"forest", description: "ah, it seems it calls a goblin! He greats you and asks for your name... he is really weird, his appereance changes", options:[{info:'continue', placeholder:'enter my name', input:true, nameInput:"name",nextId:6, image:"goblin"}] },
+  {id:5, type: 3, name:"forest", description: "ah, it seems it calls a goblin! He greats you and asks for your name", options:[{info:'continue', placeholder:'enter my name', input:true, nameInput:"name",nextId:6, image:"goblin"}] },
   {id:6, type: 3, name:"forest", description: "He explains to you that in possession of the horn, when you blow in it, it calls him and allow you to trade with him", options:[{info:'ah cool!', nextId:7, image:"shop_items"}] },
   {id:7, type: 3, name:"forest", description: "He explains you that each time you make an action, you gain some experience!", options:[{info:'noted!', nextId:8, image:"xp"}] },
   {id:8, type: 3, name:"forest", description: "but that weird creatures are roaming in the forest...!", options:[{info:'ah...', nextId:9, image:"creatures"}] },
-  {id:9, type: 3, name:"forest", description: "He salutes you and wish you good luck!", options:[{info:'thank him!', nextId:2, image:"goblin_bye_luck"}] },
-  {id:10, type: 2, name:"lake Johishoy", description: "there is a left turn, it seems to go near a lake, do you want to go there?",  options:[{info:'left', nextId:11}, {info:'forward'}] },
-  {id:11, type: 3, name:"lake Johishoy", description: "the lake is in front of you. A jacket is floating on the water.",  options:[{info:'approach', nextId:12, credits:20, items:1}, {info:'leave'}] },
-  {id:12, type: 3, name:"lake Johishoy", description: "you see a gold watch in the pocket of the jacket and some credits!",  options:[{info:'continue your path'}] },
+  {id:9, type: 3, name:"forest", description: "ah weird, its appearance changed... He salutes you and wish you good luck!", options:[{info:'thank him!', nextId:2, image:"goblin_bye_luck"}] },
+  {id:10, type: 2, name:"lake Johishoy", description: "there is a left turn, it seems to go near a lake, do you want to go there?",  options:[{info:'go near the lake', nextId:11, image:"lake"}, {info:'forward', image:"path_forest"}] },
+  {id:11, type: 3, name:"lake Johishoy", description: "the lake is in front of you, with an abandoned jacket.",  options:[{info:'approach', nextId:12, credits:20, items:1, image:"jacket"}, {info:'leave', image:"leave"}] },
+  {id:12, type: 3, name:"lake Johishoy", description: "you see a gold watch in the pocket of the jacket and some credits!",  options:[{info:'take it and continue', image:"gold_watch"}] },
   {id:13, type: 2, name:"thief", description: "You're facing a thief", options:[{info:'fight', nextId:14, credits:-20, creature:2}, {info:'run and leave'} ] },
   {id:14, type: 3, name:"thief", description: "You are not strong enough to fight, you loose some credits if you had some but gain some xp!", options:[{info:'forward'}] },
   {id:15, type: 2, name:"myst", description: "a strange myst appears in front of you",  options:[{info:'go through it', nextId:16}, {info:'avoid it'}] },
@@ -42,7 +44,7 @@ const objectsPath = [
   {id:20, type: 3, name:"myst", description: "You see an armor on the floor and took it", options:[{info:'leave through the window'}] },
   {id:21, type: 2, name:"pool", description: "there is a swimming pool",  options:[{info:'take a swim', nextId:22, experience:20}, {info:'continue the road'}] },
   {id:22, type: 3, name:"pool", description: "You enjoy a quick swim, it's great! You gain some exp! but you stink way more though as the pool was really dirty", options:[{info:'go back on the road'}] },
-  {id:23, type: 2, name:"pool", description: "A monster appears suddenly!",  options:[{info:'fight this ?&*$#&*', nextId:24, creature:3}, {info:'ruuuuuuun!'}] },
+  {id:23, type: 2, name:"pool", description: "A monster appears suddenly!",  options:[{info:'fight this ?&*$#&*', nextId:24, creature:3, image:"monster"}, {info:'ruuuuuuun!', image:"run"}] },
   {id:24, type: 3, name:"pool", description: "it hurts! but let's go on!",  options:[{info:'continue'}] },
 ]
 
@@ -63,7 +65,7 @@ const creatures = [
 
 function generateRandom () {
   const randomValue = Math.random();
-  const randomNumber = randomValue < 0.85 ? 1 : 2;
+  const randomNumber = randomValue < 0.80 ? 1 : 2;
   const objectsPathOnlyMain = objectsPath.filter(i => i.type === randomNumber)
   const randomItem = objectsPathOnlyMain[Math.floor(Math.random()*objectsPathOnlyMain.length)];
   return randomItem
