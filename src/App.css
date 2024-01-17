@@ -102,16 +102,21 @@ margin: 0 10px;
 
 .Div-items{
 position: absolute;
-right: 20px;
-top: 50px;
+right: 30px;
+top: 60px;
 color: white;
 }
 
 .Div-Shop-Min {
   position: absolute;
-  right: 20px;
-  bottom: 50px;
+  right: 50px;
+  bottom: 60px;
   color: white;
+  cursor: pointer;
+}
+
+.Shop-Icon{
+  width: 50px;
 }
 
 

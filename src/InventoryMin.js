@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import './App.css';
 
-function ProfileItemsMin({items, inventory}) {
+function InventoryMin({items, inventory, setScreen}) {
 
   if (inventory === 0) {
     return null
@@ -10,10 +10,10 @@ function ProfileItemsMin({items, inventory}) {
 
   return (
     <div className="Div-items">
-        <p>Inventory</p>
+        <h2 onClick={() => setScreen(2)}>Inventory</h2>
         {items.map(i => <p key={i.id}>{i.name}</p>)}
     </div>
   );
 }
 
-export default ProfileItemsMin;
+export default InventoryMin;
