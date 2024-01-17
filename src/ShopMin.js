@@ -10,7 +10,7 @@ function ShopMin({inventory}) {
 
   return (
     <div className="Div-Shop-Min">
-        <p>Shop</p> 
+        <p>Blow in the horn</p> 
     </div>
   );
 }
